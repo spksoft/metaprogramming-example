@@ -1,5 +1,5 @@
 // Define a decorator factory
-function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function debug(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   descriptor.value = function(...args: any[]) {
     console.log(`Calling method ${propertyKey} with arguments: ${JSON.stringify(args)}`);
@@ -12,12 +12,12 @@ function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
 
 // Example class using the decorator
 class Calculator {
-  @log
+  @debug
   add(a: number, b: number): number {
     return a + b;
   }
 
-  @log
+  @debug
   multiply(a: number, b: number): number {
     return a * b;
   }
