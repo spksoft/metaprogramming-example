@@ -5,10 +5,7 @@ This repository contains example code demonstrating meta-programming techniques 
 ## Contents
 
 - `golang/`: Go language examples
-  - `cmd/main.go`: Main Go meta-programming example
 - `typescript/`: TypeScript examples
-  - `index.ts`: TypeScript meta-programming example
-  - `package.json`: Project configuration
 
 ## Overview
 
