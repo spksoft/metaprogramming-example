@@ -30,11 +30,34 @@ function validateRange(min: number, max: number) {
   }
 }
 
+function validateEmail() {
+  return function (target: Object, propertyKey: string | symbol, parameterIndex: number) {
+    console.log('validateEmail', 'target', target, 'propertyKey', propertyKey, 'parameterIndex', parameterIndex);
+    const key = `${String(propertyKey)}_validators`;
+    if (!Reflect.hasMetadata(key, target.constructor)) {
+      Reflect.defineMetadata(key, [], target.constructor);
+    }
+    const validators = Reflect.getMetadata(key, target.constructor) as ((args: any[]) => void)[];
+    validators.push((args: any[]) => {
+      const value = args[parameterIndex];
+      if (typeof value !== 'string' || !value.includes('@')) {
+        throw new Error(`Parameter at index ${parameterIndex} is not a valid email.`);
+      }
+    });
+    Reflect.defineMetadata(key, validators, target.constructor);
+  }
+}
+
 // Example usage
 class ExampleClass {
   @validateParameters
   calculateArea(@validateRange(0, 100) width: number, @validateRange(0, 100) height: number): number {
     return width * height;
+  }
+
+  @validateParameters
+  register(@validateEmail() email: string, password: string) {
+    console.log('register', 'email', email, 'password', password);
   }
 }
 
@@ -42,13 +65,6 @@ class ExampleClass {
 
 // Test the decorated method
 const example = new ExampleClass();
-console.log(example.calculateArea(50, 60)); // Valid: Outputs 3000
-try {
-  example.calculateArea(150, 60); // Invalid: Throws error
-} catch (error) {
-  if (error instanceof Error) {
-    console.error(error.message);
-  } else {
-    console.error('An unknown error occurred');
-  }
-}
+console.log(example.register('testexample.com', 'password123'));
+console.log(example.register('test@example.com', 'password123'));
+console.log(example.calculateArea(150, 60));
